@@ -1,0 +1,12 @@
+@page "/counter"
+@using BlazorApp1.Actors.Counter
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @(State?.Count ?? 0)</p>
+
+<button class="btn btn-primary" @onclick="e => Command(new Increase())">Click me</button>
+
+
