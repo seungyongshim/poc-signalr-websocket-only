@@ -9,13 +9,15 @@ namespace BlazorApp1.Actors.FetchData;
 
 public class FetchDataActor : ReduxActor<FetchDataState>, IActor
 {
-    public FetchDataActor(FetchDataState state, NavigationManager navigationManager)
+    public FetchDataActor(FetchDataState state, NavigationManager navigationManager, ILoggerProvider loggerProvider)
         : base(state)
     {
         NavigationManager = navigationManager;
+        LoggerProvider = loggerProvider;
     }
     public HubConnection HubConnection { get; private set; }
     public NavigationManager NavigationManager { get; }
+    public ILoggerProvider LoggerProvider { get; }
 
     public Task ReceiveAsync(IContext c) => c.Message switch
     {
@@ -33,7 +35,20 @@ public class FetchDataActor : ReduxActor<FetchDataState>, IActor
                          option.SkipNegotiation = true;
                          option.Transports = HttpTransportType.WebSockets;
                      })
+            .WithAutomaticReconnect()
+            .ConfigureLogging(logging =>
+            {
+                logging.AddProvider(LoggerProvider);
+                logging.SetMinimumLevel(LogLevel.Debug);
+            })
             .Build();
+
+        HubConnection.Reconnected += HubConnection_Reconnected;
+        HubConnection.Closed += async (error) =>
+        {
+            await Task.Delay(new Random().Next(0, 5) * 1000);
+            await HubConnection.StartAsync();
+        };
 
         HubConnection.On<IEnumerable<WeatherForecast>>("Push", m =>
         {
@@ -43,6 +58,19 @@ public class FetchDataActor : ReduxActor<FetchDataState>, IActor
             });
         });
 
+        HubConnection.On<string>("ConnectionId", m =>
+        {
+            Console.WriteLine(m);
+        });
+
         await HubConnection.StartAsync();
+
+
+        
+    }
+
+    private async Task HubConnection_Reconnected(string? arg)
+    {
+        await Console.Out.WriteAsync("Reconnected!!!");
     }
 }

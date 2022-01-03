@@ -33,6 +33,8 @@ public class ViewHub : Hub
                      .ToArray()),
                   null,
                   TimeSpan.FromSeconds(0),
-                  TimeSpan.FromSeconds(3));
+                  TimeSpan.FromSeconds(1));
+
+        await HubContext.Clients.Clients(a).SendAsync("ConnectionId", a);
     }
 }
