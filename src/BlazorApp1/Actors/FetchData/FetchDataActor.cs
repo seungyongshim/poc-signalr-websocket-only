@@ -43,6 +43,9 @@ public class FetchDataActor : ReduxActor<FetchDataState>, IActor
             })
             .Build();
 
+        HubConnection.KeepAliveInterval = TimeSpan.FromSeconds(3);
+        HubConnection.ServerTimeout = TimeSpan.FromSeconds(5);
+
         HubConnection.Reconnected += HubConnection_Reconnected;
         HubConnection.Closed += async (error) =>
         {

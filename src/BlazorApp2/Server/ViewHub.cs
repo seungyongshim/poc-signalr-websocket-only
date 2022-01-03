@@ -5,9 +5,10 @@ namespace BlazorApp1.Server;
 
 public class ViewHub : Hub
 {
-    public ViewHub(IHubContext<ViewHub> hubContext)
+    public ViewHub(IHubContext<ViewHub> hubContext, ILogger<ViewHub> logger)
     {
         HubContext = hubContext;
+        Logger = logger;
     }
 
     private static readonly string[] Summaries = new[]
@@ -16,6 +17,7 @@ public class ViewHub : Hub
     };
 
     public IHubContext<ViewHub> HubContext { get; }
+    public ILogger Logger { get; }
 
     public override async Task OnConnectedAsync()
     {
@@ -23,14 +25,26 @@ public class ViewHub : Hub
 
         var a = Context.ConnectionId;
 
-        new Timer(async s => await HubContext.Clients.Clients(a)
+        new Timer(async s =>
+        {
+            try
+            {
+                await HubContext.Clients.Clients(a)
                      .SendAsync("Push", Enumerable.Range(1, 20).Select(index => new WeatherForecast
                      {
                          Date = DateTime.Now.AddDays(index),
                          TemperatureC = Random.Shared.Next(-20, 55),
                          Summary = Summaries[Random.Shared.Next(Summaries.Length)]
                      })
-                     .ToArray()),
+                     .ToArray());
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("{Exception}", ex);
+                
+            }
+            
+        },
                   null,
                   TimeSpan.FromSeconds(0),
                   TimeSpan.FromSeconds(1));
