@@ -27,27 +27,19 @@ public class ViewHub : Hub
 
         new Timer(async s =>
         {
-            try
-            {
-                await HubContext.Clients.Clients(a)
-                     .SendAsync("Push", Enumerable.Range(1, 20).Select(index => new WeatherForecast
-                     {
-                         Date = DateTime.Now.AddDays(index),
-                         TemperatureC = Random.Shared.Next(-20, 55),
-                         Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-                     })
-                     .ToArray());
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("{Exception}", ex);
-                
-            }
-            
+            await HubContext.Clients
+                            .Clients(a)
+                            .SendAsync("Push", Enumerable.Range(1, 20).Select(index => new WeatherForecast
+                            {
+                                Date = DateTime.Now.AddDays(index),
+                                TemperatureC = Random.Shared.Next(-20, 55),
+                                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                            })
+                            .ToArray());
         },
-                  null,
-                  TimeSpan.FromSeconds(0),
-                  TimeSpan.FromSeconds(1));
+        null,
+        TimeSpan.FromSeconds(0),
+        TimeSpan.FromSeconds(1));
 
         await HubContext.Clients.Clients(a).SendAsync("ConnectionId", a);
     }

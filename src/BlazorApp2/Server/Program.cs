@@ -1,4 +1,6 @@
 using BlazorApp1.Server;
+using Boost.Proto.Actor.DependencyInjection;
+using Boost.Proto.Actor.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+
+builder.Host.UseProtoActor(_ => _, _ => _, (sp, root) =>
+{
+});
 
 var app = builder.Build();
 
