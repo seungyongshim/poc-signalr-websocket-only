@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Boost.Proto.Actor.BlazorWasm" Version="0.26.0.11" />
     <PackageReference Include="Havit.Blazor.Components.Web.Bootstrap" Version="1.7.0-pre8" />
-    <PackageReference Include="LanguageExt.Core" Version="4.0.3" />
+    <PackageReference Include="LanguageExt.Core" Version="4.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.1" />
